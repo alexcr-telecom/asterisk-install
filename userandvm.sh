@@ -11,7 +11,7 @@ first=${first:-100}
 echo $first
 #read first
 
-read -p "Input step(default - 1):" step
+read -p "Input step:" step
 step=${step:-1}
 echo $step
 
@@ -19,17 +19,17 @@ read -p "Input last extension:" last
 last=${last:-199}
 echo $last
 
-read -p "Input extensions template name(default - local_users):" group
+read -p "Input extensions group:" group
 group=${group:-local_users}
 echo ${group}
 
 
-read -p "Input extensions number plan (default - XXX):" exten
+read -p "Input extensions number plan dialplan:" exten
 exten=${exten:-XXX}
 echo $exten
 
 
-read -p "Input context(default - from-users):" context
+read -p "Input context:" context
 context=${context:-from-users}
 echo $context
 
@@ -64,12 +64,12 @@ echo "  " >> sip.conf
 while [ $first -le $last ]
 do
 echo "["$first"]""("$group")" >> sip.conf
-echo "username="$first >> sip.conf >> users.txt
-echo "secret="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 12 | head -n 1) >> sip.conf  >> users.txt
+echo "username="$first |tee -a sip.conf users.txt
+echo "secret="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 12 | head -n 1) |tee -a sip.conf users.txt
 echo "callerid=\"$first"\" "<"$first">" >> sip.conf
 echo "mailbox="$first"@"$context >> sip.conf
-echo ";----------------------------" >> sip.conf >> users.txt
-echo "  " >> sip.conf >> users.txt
+echo ";----------------------------" | tee -a sip.conf users.txt
+echo "  " | tee -a sip.conf users.txt
 
 
 
