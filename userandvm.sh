@@ -61,6 +61,14 @@ echo ";----------------------------" >> sip.conf
 echo ";----------------------------" >> sip.conf
 echo "  " >> sip.conf
 
+echo ";Local Dialplan" >> extensions.conf
+echo ";----------------------------" >> extensions.conf
+echo "  " >> extensions.conf
+echo "["$context"]" >> extensions.conf
+echo ";-------HINTS--------" >> extensions.conf
+echo "  " >> extensions.conf
+
+
 while [ $first -le $last ]
 do
 echo "["$first"]""("$group")" >> sip.conf
@@ -71,11 +79,10 @@ echo "mailbox="$first"@"$context >> sip.conf
 echo ";----------------------------" | tee -a sip.conf users.txt
 echo "  " | tee -a sip.conf users.txt
 
-
-
 echo $first" => "$first", User "$first"," >> voicemail.conf
 
 
+echo "exten => "$first",hint,SIP/"$first  >> extensions.conf
 
 first=`expr $first + $step`
 done
@@ -86,10 +93,8 @@ echo ";---------EOF-----------------" >> sip.conf
 echo ";---------EOF-----------------" >> voicemail.conf
 echo "DONE"
 
-echo "Local Dialplan" >> extensions.conf
-echo ";----------------------------" >> extensions.conf
 echo "  " >> extensions.conf
-echo "["$context"]" >> extensions.conf
+
 echo "exten => _"$exten",1,NoOp(Call from \${CALLERID(num)} to \${EXTEN})"  >> extensions.conf
 echo "exten => _"$exten",n,Set(TARGETNO=\${EXTEN})" >> extensions.conf
 echo "exten => _"$exten",n,MixMonitor(\${STRFTIME(\${EPOCH},,%Y/%m/%d/local/%H:%M:%S)}-\${CALLERID(num)}-\${EXTEN}-\${UNIQUEID}.wav)" >> extensions.conf
